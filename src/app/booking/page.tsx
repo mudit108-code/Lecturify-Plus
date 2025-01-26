@@ -50,7 +50,6 @@ const Bookings = () => {
             <div>
                 <Nav loading={loading} userRole={userRole} userDetails={userDetails} showSearchBar={false} />
                 <div className='flex items-center justify-center h-screen text-5xl'>
-                    Bana Raha hu BSDK
                     <div>
                         <Loader />
                     </div>

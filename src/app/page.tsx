@@ -2,6 +2,7 @@
 import Nav from '@/components/navbar/page'
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Home from '@/components/home/page';
 const IndexPage = () => {
   const [userDetails, setUserDetails] = useState<any>(null);
   const [userRole, setUserRole] = useState("");
@@ -38,9 +39,10 @@ const IndexPage = () => {
     <div>
       <div>
         <Nav loading={loading} userRole={userRole} userDetails={userDetails} showSearchBar={true} />
+        <Home/>
       </div>
       <div>
-        Hi this is Home Page
+       
       </div>
     </div>
 
