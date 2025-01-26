@@ -42,7 +42,7 @@ const MyTurf = () => {
     return (
         <div>
             <div>
-                <Nav loading={loading} userRole={userRole} userDetails={userDetails} showSearchBar={false} />
+                <Nav loading={loading} userRole={userRole} userDetails={userDetails} />
             </div>
             My turf
         </div>
