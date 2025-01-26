@@ -109,12 +109,23 @@ const SignupU = () => {
   return (
     <div className='flex flex-col h-screen'>
       <div className='pt-4 items-center justify-center flex italic text-2xl font-bold tracking-tight'>
-        TURFIFY
+        <div
+          className="text-4xl font-bold italic tracking-tight"
+          style={{
+            background: "linear-gradient(to right, #5082EE, #D76572)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+            color: "transparent",
+          }}
+        >
+          Lecturify +
+        </div>
       </div>
       <DarkModeButton />
       <div className='flex-1 flex items-center justify-center'>
         <div>
-          <Card className="w-[350px] dark:border dark:border-white">
+          <Card className="w-[350px] border-[rgb(61,68,77)] dark:bg-[#212628]">
             <CardHeader className='flex items-center justify-center'>
               <CardTitle className='text-lg'>User Signup</CardTitle>
               <CardDescription>Welcome to Turfify</CardDescription>
@@ -124,20 +135,20 @@ const SignupU = () => {
                 <div className="grid w-full items-center gap-4">
                   <div className="flex flex-col space-y-1.5">
                     <Label htmlFor="name">Name</Label>
-                    <Input id="name" placeholder="name" value={name} onChange={(e) => setName(e.target.value)} />
+                    <Input id="name" placeholder="name" value={name} className="border-[rgb(61,68,77)] dark:bg-[#0F0F0F]" onChange={(e) => setName(e.target.value)} />
                   </div>
                   <div className="flex flex-col space-y-1.5">
                     <Label htmlFor="email">Email</Label>
-                    <Input type="email" id="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <Input type="email" id="email" placeholder="Email" value={email} className="border-[rgb(61,68,77)] dark:bg-[#0F0F0F]" onChange={(e) => setEmail(e.target.value)} />
                   </div>
                   <div className="flex flex-col space-y-1.5">
                     <Label htmlFor="phoneNumber">Phone Number</Label>
-                    <PhoneInput id="phoneNumber" value={phoneNumber || ''} onChange={(value) => setPhoneNumber(value || '')} placeholder="Enter a phone number" />
+                    <PhoneInput id="phoneNumber" value={phoneNumber || ''} className="border-[rgb(61,68,77)] dark:bg-[#0F0F0F]" onChange={(value) => setPhoneNumber(value || '')} placeholder="Enter a phone number" />
                   </div>
                   <div className="flex flex-col space-y-1.5">
                     <Label htmlFor="password">Password</Label>
                     <div className="relative">
-                      <Input type={showPassword ? "text" : "password"} id="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                      <Input type={showPassword ? "text" : "password"} id="password" className="border-[rgb(61,68,77)] dark:bg-[#0F0F0F]" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
                       <button type="button" onClick={togglePasswordVisibility} className="absolute top-1/2 right-3 transform -translate-y-1/2 focus:outline-none">
                         {showPassword ? <FaRegEye /> : <FaEyeSlash />}
                       </button>
