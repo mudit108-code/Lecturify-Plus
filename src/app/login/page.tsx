@@ -164,7 +164,9 @@ export default function LoginPage() {
           </Card>
         </div>
       </div>
-      <CopyRight />
+      <div className='mb-4'>
+      <CopyRight/>
+      </div>
     </div>
   )
 }
