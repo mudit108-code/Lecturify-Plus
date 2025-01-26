@@ -177,7 +177,7 @@ export default function ProfilePage() {
         return (
             <div className="">
                 <div>
-                    <Nav loading={loading} userRole={userRole} userDetails={userDetails} showSearchBar={false} />
+                    <Nav loading={loading} userRole={userRole} userDetails={userDetails}/>
                 </div>
                 <div className="flex mt-[85px]">
                     <div className="flex-col mt-1 ml-8 flex w-1/4 bg-[#FFFFFF] dark:bg-[#212628] rounded-3xl items-center pt-10">
@@ -376,7 +376,7 @@ export default function ProfilePage() {
         return (
             <div className="h-screen">
                 <div>
-                    <Nav loading={loading} userRole={userRole} userDetails={userDetails} showSearchBar={false} />
+                    <Nav loading={loading} userRole={userRole} userDetails={userDetails} />
                 </div>
                 <div className="flex h-[86.8%]">
                     <div className="flex-col flex w-1/4 items-center pt-10">

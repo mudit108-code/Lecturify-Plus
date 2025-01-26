@@ -48,7 +48,7 @@ const Bookings = () => {
     if (userRole === "user") {
         return (
             <div>
-                <Nav loading={loading} userRole={userRole} userDetails={userDetails} showSearchBar={false} />
+                <Nav loading={loading} userRole={userRole} userDetails={userDetails}/>
                 <div className='flex items-center justify-center h-screen text-5xl'>
                     <div>
                         <Loader />

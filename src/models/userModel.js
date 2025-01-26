@@ -1,5 +1,15 @@
 import mongoose from "mongoose";
 
+const LectureSchema = new mongoose.Schema({
+  topic: {
+    type: String,
+    required: [true, "Please provide a lecture topic"],
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -42,6 +52,8 @@ const UserSchema = new mongoose.Schema({
   verifyToken: String,
   verifyTokenExpiry: Date,
 
+  // Lectures field
+  lectures: [LectureSchema],
 });
 
 const User = mongoose.models.users || mongoose.model("users", UserSchema);

@@ -38,7 +38,7 @@ const IndexPage = () => {
   return (
     <div>
       <div>
-        <Nav loading={loading} userRole={userRole} userDetails={userDetails} showSearchBar={true} />
+        <Nav loading={loading} userRole={userRole} userDetails={userDetails}/>
         <Home/>
       </div>
       <div>

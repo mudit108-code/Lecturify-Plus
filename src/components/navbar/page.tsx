@@ -1,8 +1,6 @@
 "use client"
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FaLocationCrosshairs } from "react-icons/fa6";
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -17,17 +15,14 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import Loader from '../loader/page';
 interface NavProps {
-  showSearchBar: boolean;
   userDetails: any;
   userRole: any;
   loading: any,
 }
 
 
-const Nav: React.FC<NavProps> = ({ showSearchBar, userDetails, userRole, loading }) => {
+const Nav: React.FC<NavProps> = ({userDetails, userRole, loading }) => {
   const [darkMode, setDarkMode] = useState(false);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const autoCompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -39,19 +34,6 @@ const Nav: React.FC<NavProps> = ({ showSearchBar, userDetails, userRole, loading
       rootElement.classList.remove('dark');
     }
   }, [darkMode]);
-
-  useEffect(() => {
-    if (!loading && window.google && !autoCompleteRef.current && inputRef.current) {
-      autoCompleteRef.current = new window.google.maps.places.Autocomplete(
-        inputRef.current,
-        {
-          types: ["(cities)"],
-          componentRestrictions: { country: "in" },
-          fields: ["name"],
-        }
-      );
-    }
-  }, [loading]);
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -107,7 +89,7 @@ const Nav: React.FC<NavProps> = ({ showSearchBar, userDetails, userRole, loading
       <div className="relative z-50">
         <div
           className="fixed top-4 left-[2%] right-[2%] bg-[#FFFFFF] dark:bg-[#212628] rounded-2xl shadow-lg"
-          style={{ isolation: "isolate" }} // Prevent parent styles from affecting children
+          style={{ isolation: "isolate" }} 
         >
           <div className="h-16 flex justify-between items-center rounded-10xl">
             <div
@@ -220,7 +202,6 @@ const Nav: React.FC<NavProps> = ({ showSearchBar, userDetails, userRole, loading
               Lecturify
             </div>
             <div className='flex items-center space-x-2 mr-4'>
-              {/* show when user is logged. starting point  */}
               <div className='mr-1'>
                 <DropdownMenu>
                   <DropdownMenuTrigger>
@@ -269,15 +250,24 @@ const Nav: React.FC<NavProps> = ({ showSearchBar, userDetails, userRole, loading
     );
   } else {
     return (
-      <div className='h-14 relative z-50'>
-        <div className={`fixed top-0 bg-white dark:bg-[#171717] left-0 right-0 ${darkMode && "dark"}`}>
-          <div className='h-14 border-b border-black dark:border-white flex justify-between items-center'>
-            <div className='ml-4 mr-4 italic text-2xl font-bold tracking-tight'>
-              TURFIFY
-            </div>
-            <div className='relative'>
-              <FaLocationCrosshairs className='absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-gray-400 text-black' />
-              <Input style={{ border: darkMode ? '1px solid white' : '1px solid black' }} className='pl-10 w-[50vw]' ref={inputRef} placeholder='Search for locations' />
+      <div className='relative z-50'>
+        <div
+          className="fixed top-4 left-[2%] right-[2%] bg-[#FFFFFF] dark:bg-[#212628] rounded-2xl shadow-lg"
+          style={{ isolation: "isolate" }} // Prevent parent styles from affecting children
+        >
+          <div className="h-16 flex justify-between items-center rounded-10xl">
+            <div
+              className="ml-4 mr-4 italic text-3xl font-bold tracking-tight"
+              style={{
+                background: "linear-gradient(to right, #5082EE, #D76572)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text", // For non-Webkit browsers
+                color: "transparent",  // Ensure the text is fully transparent
+                zIndex: 10, // Ensure it renders above other styles
+              }}
+            >
+              Lecturify +
             </div>
             <div className='flex items-center space-x-2 mr-4'>
               <Button onClick={loginredirect} className='px-[2vw] ml-2 mr-2' variant="default">Login</Button>
