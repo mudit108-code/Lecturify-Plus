@@ -31,7 +31,7 @@ const LecturePage = () => {
   const [transcript, setTranscript] = useState(""); // Store the final live transcript
   const [recognition, setRecognition] = useState<any>(null);
 
-  
+
 
   // Using useRef to persist the timer across renders
   const timer = useRef<NodeJS.Timeout | null>(null);
@@ -200,10 +200,10 @@ const LecturePage = () => {
               </div>
 
               <div
-                className={`h-28 flex justify-center mt-4 dark:bg-[#0E0E0E] bg-[#E6E6E6] rounded-xl ml-4 mr-4`}
+                className={`h-16 flex justify-center mt-4 dark:bg-[#0E0E0E] bg-[#E6E6E6] rounded-xl ml-4 mr-4`}
               >
                 <Button
-                  className={`h-20 hover:bg-white bg-white mt-4 flex items-center justify-between gap-2 transition-all duration-500 ease-in-out ${isRecording ? "w-[98%] rounded-xl" : "w-96 rounded-[100px]"} `}
+                  className={`h-12 hover:bg-white bg-white mt-2 flex items-center justify-between gap-2 transition-all duration-500 ease-in-out ${isRecording ? "w-[98%] rounded-xl" : "w-80 rounded-[100px]"} `}
                   onClick={isRecording ? handleEndRecording : handleRecordClick}
                 >
                   {/* Left Side: Mic Icon and Timer */}
@@ -278,8 +278,8 @@ const LecturePage = () => {
                   {/* Text (changes to 'Stop Recording' and moves to the extreme right when recording starts) */}
                   <span
                     className={`transition-all text-black duration-500 ease-in-out ${isRecording
-                      ? "mr-0 bg-black text-white px-6 py-4 rounded-xl text-sm"
-                      : "mr-8 text-xl"
+                      ? "mr-0 bg-black text-white px-6 py-2 rounded-xl text-sm"
+                      : "mr-4 text-xl"
                       }`}
                   >
                     {isRecording ? "Stop Recording" : "Click to Record Lecture"}
@@ -287,17 +287,27 @@ const LecturePage = () => {
                 </Button>
               </div>
 
-              <div className="ml-4 mt-2">
-                <Label>Lecture Transcript</Label>
+              <div className="ml-4 mt-2 ">
+                <Label className="text-lg">Lecture Transcript</Label>
               </div>
-              <div className="ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
+              <div className="relative ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
                 <Textarea
-                  className="h-36 text-black dark:text-white"
+                  className="h-36 text-black dark:text-white pr-20" // Added padding to the right for the button
                   placeholder="Paste your transcript here."
                   value={transcript}
                   onChange={(e) => setTranscript(e.target.value)} // Allow manual editing
                 />
+                <Button
+                  className="absolute bottom-2 right-2 px-4 py-2 rounded-lg text-sm transition"
+                  onClick={() => {
+                    console.log("Transcript saved:", transcript); // Replace with your save logic
+                    alert("Transcript saved!");
+                  }}
+                >
+                  Save Transcript
+                </Button>
               </div>
+
               <div className="ml-4 mr-4 mt-4 flex item-center justify-center">
                 <Button className="w-[25%] text-lg">
                   <FaWandMagicSparkles className="mr-2 h-6 w-6" /> Generate
