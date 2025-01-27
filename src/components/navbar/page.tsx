@@ -54,9 +54,6 @@ const Nav: React.FC<NavProps> = ({userDetails, userRole, loading }) => {
   const bookingredirect = () => {
     router.push('/booking')
   }
-  const myturfredirect = () => {
-    router.push('/myturf')
-  }
   const logout = async () => {
     try {
       await axios.get('/api/users/logout')
@@ -213,8 +210,6 @@ const Nav: React.FC<NavProps> = ({userDetails, userRole, loading }) => {
                     <DropdownMenuItem className='flex items-center  justify-center dark:border-white/70 font-medium border border=gray-200 rounded-lg' onClick={homeredirect}>Home</DropdownMenuItem>
                     <DropdownMenuSeparator className='bg-black' />
                     <DropdownMenuItem className='flex items-center  justify-center dark:border-white/70 font-medium border border=gray-200 rounded-lg' onClick={profileredirect}>Profile</DropdownMenuItem>
-                    <DropdownMenuSeparator className='bg-black' />
-                    <DropdownMenuItem className='flex items-center  justify-center dark:border-white/70 font-medium border border=gray-200 rounded-lg' onClick={myturfredirect}>My Turf</DropdownMenuItem>
                     <DropdownMenuSeparator className='bg-black' />
                     <DropdownMenuItem className='flex items-center justify-center text-white font-medium bg-red-500 border-gray-200 border ' onClick={logout}>Logout</DropdownMenuItem>
                   </DropdownMenuContent>
