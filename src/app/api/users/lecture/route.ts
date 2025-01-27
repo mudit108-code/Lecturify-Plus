@@ -11,8 +11,6 @@ export async function POST(request: NextRequest) {
     try {
         // Extract userId (or email) from the token
         const userId = await getDataFromToken(request); // Get userId from the token
-        console.log("Logged in userId:", userId); // Log userId to debug
-
         if (!userId) {
             return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
         }
@@ -31,28 +29,23 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "User does not exist" }, { status: 400 });
         }
 
-        // Log user data for debugging
-        console.log("User found:", user);
 
         // Ensure the `lectures` field is initialized as an array
         if (!Array.isArray(user.lectures)) {
             user.lectures = []; // Initialize as an empty array if not already an array
         }
 
-        // Log the current state of lectures before adding the new topic
-        console.log("Current lectures before adding:", user.lectures);
+      
 
         // Add the new lecture topic to the user's lectures array
         user.lectures.push({ topic });
 
-        // Log the updated lectures array
-        console.log("Updated lectures after adding:", user.lectures);
+        
 
         // Save the updated user data in the database
         const updatedUser = await user.save();
 
-        // Log the result of save operation
-        console.log("Updated user saved:", updatedUser);
+       
 
         return NextResponse.json({
             message: "Lecture added successfully",

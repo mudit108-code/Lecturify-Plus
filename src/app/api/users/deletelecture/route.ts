@@ -16,7 +16,6 @@ connect();
 export async function DELETE(request: NextRequest) {
   try {
     const userId = await getDataFromToken(request); // Get user's _id from token
-    console.log("Logged in userId:", userId); // Log userId for debugging
 
     if (!userId) {
       return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
@@ -29,7 +28,6 @@ export async function DELETE(request: NextRequest) {
     }
 
     const userEmail = user.email; // Access the user's email from the found user object
-    console.log("User email from DB:", userEmail); // Log the email for debugging
 
     // Extract the lectureId from the request body
     const { lectureId } = await request.json();

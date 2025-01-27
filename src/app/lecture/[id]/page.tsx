@@ -7,6 +7,12 @@ import { useParams } from "next/navigation";
 import Nav from "@/components/navbar/page";
 import CopyRight from "@/components/copybar/page";
 import Loader from "@/components/loader/page";
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { FaWandMagicSparkles } from "react-icons/fa6";
+
+
 
 const LecturePage = () => {
   const router = useRouter();
@@ -93,6 +99,15 @@ const LecturePage = () => {
                     {lectureDetails.LectureTime}
                   </span>
                 </h1>
+              </div>
+              <div className="ml-4 mt-2">
+                <Label>Lecture Transcript</Label>
+              </div>
+              <div className="ml-4 mr-4 dark:bg-[#0E0E0E] rounded-xl">
+                <Textarea className="h-28 text-white" placeholder="Paste your transcript here." />
+              </div>
+              <div className="ml-4 mr-4 mt-2 flex item-center justify-center">
+                <Button className="w-[25%] text-lg"> <FaWandMagicSparkles className="mr-2 h-6 w-6"/>  Generate </Button>
               </div>
             </div>
           </div>
