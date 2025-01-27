@@ -103,11 +103,29 @@ const LecturePage = () => {
               <div className="ml-4 mt-2">
                 <Label>Lecture Transcript</Label>
               </div>
-              <div className="ml-4 mr-4 dark:bg-[#0E0E0E] rounded-xl">
-                <Textarea className="h-28 text-white" placeholder="Paste your transcript here." />
+              <div className="ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
+                <Textarea className="h-28 text-black dark:text-white" placeholder="Paste your transcript here." />
               </div>
-              <div className="ml-4 mr-4 mt-2 flex item-center justify-center">
-                <Button className="w-[25%] text-lg"> <FaWandMagicSparkles className="mr-2 h-6 w-6"/>  Generate </Button>
+              <div className="ml-4 mr-4 mt-4 flex item-center justify-center">
+                <Button className="w-[25%] text-lg"> <FaWandMagicSparkles className="mr-2 h-6 w-6" />  Generate </Button>
+              </div>
+              <div className="h-72 rounded-xl bg-[#E6E6E6] dark:bg-[#0E0E0E] mt-4 ml-4 mr-4 flex justify-between items-center gap-x-4 p-4">
+                {/* Box 1 */}
+                <div className="w-1/4 h-full bg-[#FFFFFF] dark:bg-[#212628] rounded-lg flex justify-center items-center text-white">
+                  Box 1
+                </div>
+                {/* Box 2 */}
+                <div className="w-1/4 h-full  bg-[#FFFFFF] dark:bg-[#212628] rounded-lg flex justify-center items-center text-white">
+                  Box 2
+                </div>
+                {/* Box 3 */}
+                <div className="w-1/4 h-full  bg-[#FFFFFF] dark:bg-[#212628] rounded-lg flex justify-center items-center text-white">
+                  Box 3
+                </div>
+                {/* Box 4 */}
+                <div className="w-1/4 h-full  bg-[#FFFFFF] dark:bg-[#212628] rounded-lg flex justify-center items-center text-white">
+                  Box 4
+                </div>
               </div>
             </div>
           </div>
