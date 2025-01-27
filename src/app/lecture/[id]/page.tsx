@@ -7,13 +7,17 @@ import { useParams } from "next/navigation";
 import Nav from "@/components/navbar/page";
 import CopyRight from "@/components/copybar/page";
 import Loader from "@/components/loader/page";
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import { FaMicrophoneAlt } from "react-icons/fa";
 
-
+declare global {
+  interface Window {
+    webkitSpeechRecognition: any;
+  }
+}
 
 const LecturePage = () => {
   const router = useRouter();
@@ -24,9 +28,48 @@ const LecturePage = () => {
   const [lectureDetails, setLectureDetails] = useState<any>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [time, setTime] = useState(0); // Time in seconds
+  const [transcript, setTranscript] = useState(""); // Store the final live transcript
+  const [recognition, setRecognition] = useState<any>(null);
+
+  
 
   // Using useRef to persist the timer across renders
   const timer = useRef<NodeJS.Timeout | null>(null);
+
+  // Speech Recognition Setup
+  useEffect(() => {
+    if (typeof window !== "undefined" && "webkitSpeechRecognition" in window) {
+      const recognitionInstance = new window.webkitSpeechRecognition();
+      recognitionInstance.continuous = true;
+      recognitionInstance.interimResults = true;
+      recognitionInstance.lang = "en-US";
+
+      recognitionInstance.onresult = (event: any) => {
+        let finalTranscript = "";
+        let interimTranscript = "";
+        // Iterate through the results
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript = event.results[i][0].transcript; // Store the last interim result
+          }
+        }
+
+        // Only append final results once
+        setTranscript((prevTranscript) => {
+          if (finalTranscript.trim() && !prevTranscript.endsWith(finalTranscript.trim())) {
+            return prevTranscript + " " + finalTranscript.trim();
+          }
+          return prevTranscript; // Avoid duplicate final text
+        });
+      };
+
+      setRecognition(recognitionInstance);
+    } else {
+      console.error("Speech recognition is not supported in this browser.");
+    }
+  }, []);
 
   // Start timer when recording starts
   useEffect(() => {
@@ -35,12 +78,22 @@ const LecturePage = () => {
       timer.current = setInterval(() => {
         setTime((prevTime) => prevTime + 1); // Increment time every second
       }, 1000);
+
+      // Start Speech Recognition
+      if (recognition) {
+        recognition.start();
+      }
     } else {
       // Stop the timer when recording is stopped
       if (timer.current) {
         clearInterval(timer.current);
       }
       setTime(0); // Reset the timer when the recording ends
+
+      // Stop Speech Recognition
+      if (recognition) {
+        recognition.stop();
+      }
     }
 
     // Cleanup the timer on component unmount or isRecording change
@@ -49,7 +102,7 @@ const LecturePage = () => {
         clearInterval(timer.current);
       }
     };
-  }, [isRecording]);
+  }, [isRecording, recognition]);
 
   // Format the time as MM:SS
   const formatTime = (time: number) => {
@@ -146,13 +199,6 @@ const LecturePage = () => {
                 </h1>
               </div>
 
-
-
-
-
-
-
-
               <div
                 className={`h-28 flex justify-center mt-4 dark:bg-[#0E0E0E] bg-[#E6E6E6] rounded-xl ml-4 mr-4`}
               >
@@ -241,37 +287,22 @@ const LecturePage = () => {
                 </Button>
               </div>
 
-
-
-
-
               <div className="ml-4 mt-2">
                 <Label>Lecture Transcript</Label>
               </div>
               <div className="ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
-                <Textarea className="h-36 text-black dark:text-white" placeholder="Paste your transcript here." />
+                <Textarea
+                  className="h-36 text-black dark:text-white"
+                  placeholder="Paste your transcript here."
+                  value={transcript}
+                  onChange={(e) => setTranscript(e.target.value)} // Allow manual editing
+                />
               </div>
               <div className="ml-4 mr-4 mt-4 flex item-center justify-center">
-                <Button className="w-[25%] text-lg"> <FaWandMagicSparkles className="mr-2 h-6 w-6" />  Generate </Button>
+                <Button className="w-[25%] text-lg">
+                  <FaWandMagicSparkles className="mr-2 h-6 w-6" /> Generate
+                </Button>
               </div>
-              {/* <div className="h-72 rounded-xl bg-[#E6E6E6] dark:bg-[#0E0E0E] mt-4 ml-4 mr-4 flex justify-between items-center gap-x-4 p-4">
-              
-                <div className="w-1/4 h-full bg-[#FFFFFF] dark:bg-[#212628] rounded-lg flex justify-center items-center text-white">
-                  Box 1
-                </div>
-              
-                <div className="w-1/4 h-full  bg-[#FFFFFF] dark:bg-[#212628] rounded-lg flex justify-center items-center text-white">
-                  Box 2
-                </div>
-           
-                <div className="w-1/4 h-full  bg-[#FFFFFF] dark:bg-[#212628] rounded-lg flex justify-center items-center text-white">
-                  Box 3
-                </div>
-             
-                <div className="w-1/4 h-full  bg-[#FFFFFF] dark:bg-[#212628] rounded-lg flex justify-center items-center text-white">
-                  Box 4
-                </div>
-              </div> */}
             </div>
           </div>
         </div>
