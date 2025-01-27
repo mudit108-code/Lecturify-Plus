@@ -266,7 +266,7 @@ const Home = () => {
                             </thead>
                             <tbody>
                                 {lectures.map((lecture) => (
-                                    <tr key={lecture._id} className="hover:bg-gray-200 dark:hover:bg-gray-700">
+                                    <tr key={lecture._id} className="hover:bg-gray-200 dark:hover:bg-gray-900">
                                         <td className="p-2 border-b border-gray-700">
                                             <TfiWrite className="text-xl" />
                                         </td>
