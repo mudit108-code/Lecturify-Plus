@@ -13,6 +13,22 @@ const LectureSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  notes: {
+    type: String, // Stores the generated notes code in React/HTML/Tailwind
+    default: null,
+  },
+  qwiz: {
+    type: String, // Stores the generated quiz (qwiz) code
+    default: null,
+  },
+  flashcards: {
+    type: String, // Stores the generated flashcards code
+    default: null,
+  },
+  cheatSheet: {
+    type: String, // Stores the generated cheat sheet code
+    default: null,
+  },
 });
 
 const UserSchema = new mongoose.Schema({

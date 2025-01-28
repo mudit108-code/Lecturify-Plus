@@ -37,6 +37,10 @@ const LecturePage = () => {
   const [time, setTime] = useState(0); // Time in seconds
   const [transcript, setTranscript] = useState(""); // Store the final live transcript
   const [recognition, setRecognition] = useState<any>(null);
+  const [notes, setNotes] = useState(null);
+  const [qwiz, setQwiz] = useState(null);
+  const [flashcards, setFlashcards] = useState(null);
+  const [cheatSheet, setCheatSheet] = useState(null);
 
 
 
@@ -193,6 +197,10 @@ const LecturePage = () => {
 
           // Set the transcript to the state if it exists
           setTranscript(lecture.transcript || "");
+          setNotes(lecture.notes || "");
+          setQwiz(lecture.qwiz || "");
+          setFlashcards(lecture.flashcards || "");
+          setCheatSheet(lecture.cheatSheet || "");
         } else {
           console.error("Lecture not found");
         }
@@ -394,26 +402,46 @@ const LecturePage = () => {
                         <div className="w-full max-h-[482px] min-h-[120px] overflow-y-auto mb-2">
                           <TabsContent value="notes">
                             <div className="w-full">
-                              <p className="px-2 text-sm">
-                                Write or view your notes here. Write or view your notes here. Add more text to test the block resizing functionality.
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae
-                                vestibulum vestibulum. 
-                              </p>
+                              {notes ? (
+                                <p className="px-2 text-sm">{notes}</p>
+                              ) : (
+                                <p className="px-2 text-sm text-gray-500">
+                                  No notes available.
+                                </p>
+                              )}
                             </div>
                           </TabsContent>
                           <TabsContent value="qwiz">
                             <div className="w-full">
-                              <p className="px-2 text-sm">Create or take a quiz here.</p>
+                              {qwiz ? (
+                                <p className="px-2 text-sm">{qwiz}</p>
+                              ) : (
+                                <p className="px-2 text-sm text-gray-500">
+                                  No quiz available.
+                                </p>
+                              )}
                             </div>
                           </TabsContent>
                           <TabsContent value="flashcards">
                             <div className="w-full">
-                              <p className="px-2 text-sm">View or create flashcards here.</p>
+                              {flashcards ? (
+                                <p className="px-2 text-sm">{flashcards}</p>
+                              ) : (
+                                <p className="px-2 text-sm text-gray-500">
+                                  No flashcards available.
+                                </p>
+                              )}
                             </div>
                           </TabsContent>
                           <TabsContent value="cheatsheet">
                             <div className="w-full">
-                              <p className="px-2 text-sm">View your cheat sheet here.</p>
+                              {cheatSheet ? (
+                                <p className="px-2 text-sm">{cheatSheet}</p>
+                              ) : (
+                                <p className="px-2 text-sm text-gray-500">
+                                  No cheat sheet available.
+                                </p>
+                              )}
                             </div>
                           </TabsContent>
                         </div>
