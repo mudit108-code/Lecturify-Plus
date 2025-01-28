@@ -394,8 +394,7 @@ const LecturePage = () => {
                         <div className="w-full max-h-[482px] min-h-[120px] overflow-y-auto mb-2">
                           <TabsContent value="notes">
                             <div className="w-full">
-                              {/* Dynamic Content */}
-                              <p className="p-4">
+                              <p className="px-2 text-sm">
                                 Write or view your notes here. Write or view your notes here. Add more text to test the block resizing functionality.
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae
                                 vestibulum vestibulum. 
@@ -404,17 +403,17 @@ const LecturePage = () => {
                           </TabsContent>
                           <TabsContent value="qwiz">
                             <div className="w-full">
-                              <p className="p-4">Create or take a quiz here.</p>
+                              <p className="px-2 text-sm">Create or take a quiz here.</p>
                             </div>
                           </TabsContent>
                           <TabsContent value="flashcards">
                             <div className="w-full">
-                              <p className="p-4">View or create flashcards here.</p>
+                              <p className="px-2 text-sm">View or create flashcards here.</p>
                             </div>
                           </TabsContent>
                           <TabsContent value="cheatsheet">
                             <div className="w-full">
-                              <p className="p-4">View your cheat sheet here.</p>
+                              <p className="px-2 text-sm">View your cheat sheet here.</p>
                             </div>
                           </TabsContent>
                         </div>
