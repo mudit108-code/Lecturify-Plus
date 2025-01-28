@@ -12,6 +12,22 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import { FaMicrophoneAlt } from "react-icons/fa";
+import { toast } from 'sonner';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
 
 declare global {
   interface Window {
@@ -44,7 +60,7 @@ const LecturePage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          topic: lectureDetails?.lectureName, // Ensure you use a valid lecture name here
+          topic: lectureDetails?.lectureName,
           transcript,
         }),
       });
@@ -52,7 +68,12 @@ const LecturePage = () => {
       const result = await response.json();
 
       if (response.ok) {
-        alert(result.message);
+        toast.success(result.message, {
+          style: {
+            background: 'green',
+            color: 'white',
+          },
+        });
       } else {
         alert(`Error: ${result.error}`);
       }
@@ -166,19 +187,19 @@ const LecturePage = () => {
         setUserDetails(data);
         setUserRole(data.role);
         setLoading(false);
-  
+
         // Find the lecture based on the ID
         const lecture = data.lectures.find(
           (lecture: any) => lecture._id.toString() === id
         );
-  
+
         if (lecture) {
           setLectureDetails({
             lectureId: lecture._id,
             lectureName: lecture.topic,
             LectureTime: formatLectureTime(lecture.createdAt),
           });
-  
+
           // Set the transcript to the state if it exists
           setTranscript(lecture.transcript || "");
         } else {
@@ -189,7 +210,7 @@ const LecturePage = () => {
         router.push("/login");
       }
     };
-  
+
     const token = localStorage.getItem("token");
     if (!token) {
       router.push("/login");
@@ -197,7 +218,7 @@ const LecturePage = () => {
       fetchUserData();
     }
   }, [router, id]);
-  
+
 
   const expirylogout = async () => {
     try {
@@ -332,16 +353,50 @@ const LecturePage = () => {
                 />
                 <Button
                   className="absolute bottom-2 right-2 px-4 py-2 rounded-lg text-sm transition"
-                   onClick={saveTranscript}
+                  onClick={saveTranscript}
                 >
                   Save Transcript
                 </Button>
               </div>
 
-              <div className="ml-4 mr-4 mt-4 flex item-center justify-center">
+              <div className="ml-4 mr-4 mt-2 flex item-center justify-center">
                 <Button className="w-[25%] text-lg">
                   <FaWandMagicSparkles className="mr-2 h-6 w-6" /> Generate
                 </Button>
+              </div>
+              <div className="h-48 mt-2 ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
+                <div>
+                  <div className="h-40 mt-2 ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
+                    <div>
+                      <Tabs defaultValue="notes" className="w-full flex flex-col items-center">
+                        {/* Centered TabsList with 100% width */}
+                        <TabsList className="w-[100%] bg-[#FFFFFF] mt-2 justify-center">
+                          <TabsTrigger className="w-[25%]" value="notes">Notes</TabsTrigger>
+                          <TabsTrigger className="w-[25%]" value="qwiz">Qwiz</TabsTrigger>
+                          <TabsTrigger className="w-[25%]" value="flashcards">Flashcards</TabsTrigger>
+                          <TabsTrigger className="w-[25%]" value="cheatsheet">Cheat Sheet</TabsTrigger>
+                        </TabsList>
+                        {/* Taller Content Block */}
+                        <div className="w-[100%] bg-[#FFFFFF] mt-2 rounded-lg h-32 flex items-center justify-center">
+                          <TabsContent value="notes">
+                            <p>Write or view your notes here.</p>
+                          </TabsContent>
+                          <TabsContent value="qwiz">
+                            <p>Create or take a quiz here.</p>
+                          </TabsContent>
+                          <TabsContent value="flashcards">
+                            <p>View or create flashcards here.</p>
+                          </TabsContent>
+                          <TabsContent value="cheatsheet">
+                            <p>View your cheat sheet here.</p>
+                          </TabsContent>
+                        </div>
+                      </Tabs>
+                    </div>
+                  </div>
+
+
+                </div>
               </div>
             </div>
           </div>
