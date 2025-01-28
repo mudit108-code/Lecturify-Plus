@@ -14,15 +14,6 @@ import { FaWandMagicSparkles } from "react-icons/fa6";
 import { FaMicrophoneAlt } from "react-icons/fa";
 import { toast } from 'sonner';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import {
   Tabs,
   TabsContent,
   TabsList,
@@ -241,7 +232,10 @@ const LecturePage = () => {
     <div>
       <div className="h-[100vh] pt-24">
         <Nav loading={loading} userRole={userRole} userDetails={userDetails} />
-        <div className="h-[90%] dark:bg-[#212628] rounded-3xl ml-8 bg-white mr-8">
+        <div
+          className="h-[90%] dark:bg-[#212628] rounded-3xl ml-8 bg-white mr-8 overflow-y-auto"
+          style={{ maxHeight: "90vh" }}
+        >
           <div>
             <div className="text-xl font-bold">
               <div className="pl-4 pt-4">
@@ -254,10 +248,10 @@ const LecturePage = () => {
               </div>
 
               <div
-                className={`h-16 flex justify-center mt-4 dark:bg-[#0E0E0E] bg-[#E6E6E6] rounded-xl ml-4 mr-4`}
+                className={`h-16 border border-[rgb(61,68,77)] flex justify-center mt-4 dark:bg-[#0E0E0E] bg-[#E6E6E6] rounded-xl ml-4 mr-4`}
               >
                 <Button
-                  className={`h-12 hover:bg-white bg-white mt-2 flex items-center justify-between gap-2 transition-all duration-500 ease-in-out ${isRecording ? "w-[98%] rounded-xl" : "w-80 rounded-[100px]"} `}
+                  className={`h-12 border border-[rgb(61,68,77)] hover:bg-white bg-white mt-2 flex items-center justify-between gap-2 transition-all duration-500 ease-in-out ${isRecording ? "w-[98%] rounded-xl" : "w-80 rounded-[100px]"} `}
                   onClick={isRecording ? handleEndRecording : handleRecordClick}
                 >
                   {/* Left Side: Mic Icon and Timer */}
@@ -344,7 +338,7 @@ const LecturePage = () => {
               <div className="ml-4 mt-2 ">
                 <Label className="text-lg">Lecture Transcript</Label>
               </div>
-              <div className="relative ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
+              <div className="relative border border-[rgb(61,68,77)] ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
                 <Textarea
                   className="h-36 text-black dark:text-white pr-20" // Added padding to the right for the button
                   placeholder="Paste your transcript here."
@@ -359,45 +353,81 @@ const LecturePage = () => {
                 </Button>
               </div>
 
-              <div className="ml-4 mr-4 mt-2 flex item-center justify-center">
+              <div className="ml-4  mr-4 mt-2 flex item-center justify-center">
                 <Button className="w-[25%] text-lg">
                   <FaWandMagicSparkles className="mr-2 h-6 w-6" /> Generate
                 </Button>
               </div>
-              <div className="h-48 mt-2 ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
-                <div>
-                  <div className="h-40 mt-2 ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
-                    <div>
-                      <Tabs defaultValue="notes" className="w-full flex flex-col items-center">
-                        {/* Centered TabsList with 100% width */}
-                        <TabsList className="w-[100%] bg-[#FFFFFF] mt-2 justify-center">
-                          <TabsTrigger className="w-[25%]" value="notes">Notes</TabsTrigger>
-                          <TabsTrigger className="w-[25%]" value="qwiz">Qwiz</TabsTrigger>
-                          <TabsTrigger className="w-[25%]" value="flashcards">Flashcards</TabsTrigger>
-                          <TabsTrigger className="w-[25%]" value="cheatsheet">Cheat Sheet</TabsTrigger>
-                        </TabsList>
-                        {/* Taller Content Block */}
-                        <div className="w-[100%] bg-[#FFFFFF] mt-2 rounded-lg h-32 flex items-center justify-center">
+              <div className="mb-3 border border-[rgb(61,68,77)] mt-2 ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
+                <div className="ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
+                  <div>
+                    <Tabs defaultValue="notes" className="w-full flex flex-col items-center">
+                      {/* Centered TabsList with 100% width */}
+                      <TabsList className="w-[100%] text-black dark:text-white bg-[#FFFFFF] dark:bg-[#212628] mt-2 justify-center">
+                        <TabsTrigger
+                          className="w-[25%] border border-transparent data-[state=active]:border-[rgb(61,68,77)] data-[state=active]:rounded-md"
+                          value="notes"
+                        >
+                          Notes
+                        </TabsTrigger>
+                        <TabsTrigger
+                          className="w-[25%] border border-transparent data-[state=active]:border-[rgb(61,68,77)] data-[state=active]:rounded-md"
+                          value="qwiz"
+                        >
+                          Qwiz
+                        </TabsTrigger>
+                        <TabsTrigger
+                          className="w-[25%] border border-transparent data-[state=active]:border-[rgb(61,68,77)] data-[state=active]:rounded-md"
+                          value="flashcards"
+                        >
+                          Flashcards
+                        </TabsTrigger>
+                        <TabsTrigger
+                          className="w-[25%] border border-transparent data-[state=active]:border-[rgb(61,68,77)] data-[state=active]:rounded-md"
+                          value="cheatsheet"
+                        >
+                          Cheat Sheet
+                        </TabsTrigger>
+                      </TabsList>
+                      {/* Taller Content Block */}
+                      <div className="w-[100%] bg-[#FFFFFF] dark:bg-[#212628] mt-2 mb-2 rounded-lg flex items-center justify-center">
+                        <div className="w-full max-h-[482px] min-h-[120px] overflow-y-auto mb-2">
                           <TabsContent value="notes">
-                            <p>Write or view your notes here.</p>
+                            <div className="w-full">
+                              {/* Dynamic Content */}
+                              <p className="p-4">
+                                Write or view your notes here. Write or view your notes here. Add more text to test the block resizing functionality.
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae
+                                vestibulum vestibulum. 
+                              </p>
+                            </div>
                           </TabsContent>
                           <TabsContent value="qwiz">
-                            <p>Create or take a quiz here.</p>
+                            <div className="w-full">
+                              <p className="p-4">Create or take a quiz here.</p>
+                            </div>
                           </TabsContent>
                           <TabsContent value="flashcards">
-                            <p>View or create flashcards here.</p>
+                            <div className="w-full">
+                              <p className="p-4">View or create flashcards here.</p>
+                            </div>
                           </TabsContent>
                           <TabsContent value="cheatsheet">
-                            <p>View your cheat sheet here.</p>
+                            <div className="w-full">
+                              <p className="p-4">View your cheat sheet here.</p>
+                            </div>
                           </TabsContent>
                         </div>
-                      </Tabs>
-                    </div>
+                      </div>
+                    </Tabs>
                   </div>
-
-
                 </div>
               </div>
+
+
+
+
+
             </div>
           </div>
         </div>
