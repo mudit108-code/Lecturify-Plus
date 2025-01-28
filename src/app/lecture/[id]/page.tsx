@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import { FaMicrophoneAlt } from "react-icons/fa";
 import { toast } from 'sonner';
+import ReactMarkdown from "react-markdown";
 import {
   Tabs,
   TabsContent,
@@ -41,7 +42,99 @@ const LecturePage = () => {
   const [qwiz, setQwiz] = useState(null);
   const [flashcards, setFlashcards] = useState(null);
   const [cheatSheet, setCheatSheet] = useState(null);
+  const [buttonText, setButtonText] = useState("Generate");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [buttonAnimation, setButtonAnimation] = useState("");
 
+  const handleGenerateClick = async () => {
+    try {
+      setIsGenerating(true);
+      setButtonAnimation("animating");
+  
+      // Step 1: Generate the lecture notes
+      setButtonText("Generating Notes...");
+      const lectureNotesResponse = await fetch("/api/users/generateResponse", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ transcript, type: "lectureNotes" }),
+      });
+      const lectureNotesResult = await lectureNotesResponse.json();
+      setNotes(lectureNotesResult.output);
+  
+      // Step 2: Generate the cheat sheet
+      setButtonText("Generating Cheat Sheet...");
+      const cheatSheetResponse = await fetch("/api/users/generateResponse", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ transcript, type: "cheatsheet" }),
+      });
+      const cheatSheetResult = await cheatSheetResponse.json();
+      setCheatSheet(cheatSheetResult.output);
+  
+      // Step 3: Generate the quiz
+      setButtonText("Generating Quiz...");
+      const quizResponse = await fetch("/api/users/generateResponse", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ transcript, type: "quiz" }),
+      });
+      const quizResult = await quizResponse.json();
+      setQwiz(quizResult.output);
+  
+      // Step 4: Generate the flashcards
+      setButtonText("Generating Scenario Q...");
+      const flashcardsResponse = await fetch("/api/users/generateResponse", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ transcript, type: "flashcards" }),
+      });
+      const flashcardsResult = await flashcardsResponse.json();
+      setFlashcards(flashcardsResult.output);
+  
+      // Step 5: Save all generated content
+      setButtonText("Saving Content...");
+      const saveGenerationResponse = await fetch("/api/users/saveGeneration", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          topic: lectureDetails?.lectureName, // Ensure the topic is being passed
+          notes: lectureNotesResult.output,
+          qwiz: quizResult.output,
+          flashcards: flashcardsResult.output,
+          cheatSheet: cheatSheetResult.output,
+        }),
+      });
+      const saveGenerationResult = await saveGenerationResponse.json();
+      if (saveGenerationResult.success) {
+        toast.success("Generation Saved", {
+          style: {
+            background: 'green',
+            color: 'white',
+          },
+        });
+      } else {
+        setButtonText("Error Saving Content");
+      }
+  
+      setIsGenerating(false);
+      setButtonAnimation(""); // Reset the animation when done
+    } catch (error) {
+      console.error("Error during content generation:", error);
+      setButtonText("Error occurred");
+      setIsGenerating(false);
+    }
+  };
+  
 
 
   // Using useRef to persist the timer across renders
@@ -146,12 +239,14 @@ const LecturePage = () => {
     };
   }, [isRecording, recognition]);
 
-  // Format the time as MM:SS
+  // Format the time as HH:MM:SS
   const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    const hours = Math.floor(time / 3600); // Calculate hours
+    const minutes = Math.floor((time % 3600) / 60); // Calculate remaining minutes
+    const seconds = time % 60; // Calculate remaining seconds
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   };
+
 
   const handleRecordClick = () => {
     setIsRecording(true); // Start recording
@@ -245,8 +340,8 @@ const LecturePage = () => {
           style={{ maxHeight: "90vh" }}
         >
           <div>
-            <div className="text-xl font-bold">
-              <div className="pl-4 pt-4">
+            <div className="text-xl ">
+              <div className="pl-4 pt-4 font-bold">
                 <h1 className="italic text-3xl">
                   {lectureDetails.lectureName} {" "}
                   <span className="text-base lowercase">
@@ -343,12 +438,12 @@ const LecturePage = () => {
                 </Button>
               </div>
 
-              <div className="ml-4 mt-2 ">
+              <div className="ml-4 mt-2 font-bold">
                 <Label className="text-lg">Lecture Transcript</Label>
               </div>
               <div className="relative border border-[rgb(61,68,77)] ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
                 <Textarea
-                  className="h-36 text-black dark:text-white pr-20" // Added padding to the right for the button
+                  className="h-36 text-black dark:text-white pr-20 textarea-no-scrollbar" // Added padding to the right for the button
                   placeholder="Paste your transcript here."
                   value={transcript}
                   onChange={(e) => setTranscript(e.target.value)} // Allow manual editing
@@ -361,11 +456,22 @@ const LecturePage = () => {
                 </Button>
               </div>
 
-              <div className="ml-4  mr-4 mt-2 flex item-center justify-center">
-                <Button className="w-[25%] text-lg">
-                  <FaWandMagicSparkles className="mr-2 h-6 w-6" /> Generate
+              <div className="ml-4 mr-4 mt-2 flex item-center justify-center">
+                <Button
+                  className={`w-[25%] text-lg ${isGenerating ? 'animating' : ''}`}
+                  onClick={handleGenerateClick}
+                  disabled={isGenerating}
+                >
+                  <FaWandMagicSparkles className={`mr-2 h-6 w-6 ${isGenerating ? 'button-icon' : ''}`} />
+                  <span className={`${isGenerating ? 'button-text' : ''}`}>
+                    {buttonText}
+                  </span>
                 </Button>
               </div>
+
+
+
+
               <div className="mb-3 border border-[rgb(61,68,77)] mt-2 ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
                 <div className="ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
                   <div>
@@ -388,7 +494,7 @@ const LecturePage = () => {
                           className="w-[25%] border border-transparent data-[state=active]:border-[rgb(61,68,77)] data-[state=active]:rounded-md"
                           value="flashcards"
                         >
-                          Flashcards
+                          Scenario Questions
                         </TabsTrigger>
                         <TabsTrigger
                           className="w-[25%] border border-transparent data-[state=active]:border-[rgb(61,68,77)] data-[state=active]:rounded-md"
@@ -403,18 +509,16 @@ const LecturePage = () => {
                           <TabsContent value="notes">
                             <div className="w-full">
                               {notes ? (
-                                <p className="px-2 text-sm">{notes}</p>
+                                <ReactMarkdown className="px-2 text-sm">{notes}</ReactMarkdown>
                               ) : (
-                                <p className="px-2 text-sm text-gray-500">
-                                  No notes available.
-                                </p>
+                                <p className="px-2 text-sm text-gray-500">No notes available.</p>
                               )}
                             </div>
                           </TabsContent>
                           <TabsContent value="qwiz">
                             <div className="w-full">
                               {qwiz ? (
-                                <p className="px-2 text-sm">{qwiz}</p>
+                               <ReactMarkdown className="px-2 text-sm">{qwiz}</ReactMarkdown>
                               ) : (
                                 <p className="px-2 text-sm text-gray-500">
                                   No quiz available.
@@ -425,10 +529,10 @@ const LecturePage = () => {
                           <TabsContent value="flashcards">
                             <div className="w-full">
                               {flashcards ? (
-                                <p className="px-2 text-sm">{flashcards}</p>
+                                <ReactMarkdown className="px-2 text-sm">{flashcards}</ReactMarkdown>
                               ) : (
                                 <p className="px-2 text-sm text-gray-500">
-                                  No flashcards available.
+                                  No scenario Based Questions available.
                                 </p>
                               )}
                             </div>
@@ -436,7 +540,7 @@ const LecturePage = () => {
                           <TabsContent value="cheatsheet">
                             <div className="w-full">
                               {cheatSheet ? (
-                                <p className="px-2 text-sm">{cheatSheet}</p>
+                               <ReactMarkdown className="px-2 text-sm">{cheatSheet}</ReactMarkdown>
                               ) : (
                                 <p className="px-2 text-sm text-gray-500">
                                   No cheat sheet available.
@@ -444,16 +548,13 @@ const LecturePage = () => {
                               )}
                             </div>
                           </TabsContent>
+
                         </div>
                       </div>
                     </Tabs>
                   </div>
                 </div>
               </div>
-
-
-
-
 
             </div>
           </div>

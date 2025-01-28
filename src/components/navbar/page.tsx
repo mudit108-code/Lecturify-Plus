@@ -21,24 +21,33 @@ interface NavProps {
 }
 
 
-const Nav: React.FC<NavProps> = ({userDetails, userRole, loading }) => {
+const Nav: React.FC<NavProps> = ({ userDetails, userRole, loading }) => {
   const [darkMode, setDarkMode] = useState(false);
   const router = useRouter();
 
+  // Check localStorage on component mount for the dark mode preference
   useEffect(() => {
-    const rootElement = document.documentElement;
-
-    if (darkMode) {
-      rootElement.classList.add('dark');
-    } else {
-      rootElement.classList.remove('dark');
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      setDarkMode(true);
+      document.documentElement.classList.add("dark");
     }
-  }, [darkMode]);
+  }, []);
 
+  // Update `localStorage` and apply the dark mode class when toggling
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
+    setDarkMode((prevMode) => {
+      const newMode = !prevMode;
+      if (newMode) {
+        localStorage.setItem("theme", "dark");
+        document.documentElement.classList.add("dark");
+      } else {
+        localStorage.setItem("theme", "light");
+        document.documentElement.classList.remove("dark");
+      }
+      return newMode;
+    });
   };
-
   const loginredirect = () => {
     router.push('/login');
   };
@@ -149,7 +158,7 @@ const Nav: React.FC<NavProps> = ({userDetails, userRole, loading }) => {
               {/* show when user is logged. ending point */}
               <div>
                 <label className="theme-switch">
-                  <input
+                <input
                     type="checkbox"
                     className="theme-switch__checkbox"
                     checked={darkMode}
