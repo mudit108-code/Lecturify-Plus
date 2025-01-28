@@ -36,6 +36,32 @@ const LecturePage = () => {
   // Using useRef to persist the timer across renders
   const timer = useRef<NodeJS.Timeout | null>(null);
 
+  const saveTranscript = async () => {
+    try {
+      const response = await fetch("/api/users/saveTranscript", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          topic: lectureDetails?.lectureName, // Ensure you use a valid lecture name here
+          transcript,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(result.message);
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    } catch (error) {
+      console.error("Error saving transcript:", error);
+      alert("An error occurred while saving the transcript.");
+    }
+  };
+
   // Speech Recognition Setup
   useEffect(() => {
     if (typeof window !== "undefined" && "webkitSpeechRecognition" in window) {
@@ -140,16 +166,21 @@ const LecturePage = () => {
         setUserDetails(data);
         setUserRole(data.role);
         setLoading(false);
+  
+        // Find the lecture based on the ID
         const lecture = data.lectures.find(
           (lecture: any) => lecture._id.toString() === id
         );
-
+  
         if (lecture) {
           setLectureDetails({
             lectureId: lecture._id,
             lectureName: lecture.topic,
             LectureTime: formatLectureTime(lecture.createdAt),
           });
+  
+          // Set the transcript to the state if it exists
+          setTranscript(lecture.transcript || "");
         } else {
           console.error("Lecture not found");
         }
@@ -158,6 +189,7 @@ const LecturePage = () => {
         router.push("/login");
       }
     };
+  
     const token = localStorage.getItem("token");
     if (!token) {
       router.push("/login");
@@ -165,6 +197,7 @@ const LecturePage = () => {
       fetchUserData();
     }
   }, [router, id]);
+  
 
   const expirylogout = async () => {
     try {
@@ -299,10 +332,7 @@ const LecturePage = () => {
                 />
                 <Button
                   className="absolute bottom-2 right-2 px-4 py-2 rounded-lg text-sm transition"
-                  onClick={() => {
-                    console.log("Transcript saved:", transcript); // Replace with your save logic
-                    alert("Transcript saved!");
-                  }}
+                   onClick={saveTranscript}
                 >
                   Save Transcript
                 </Button>

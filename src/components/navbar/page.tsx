@@ -166,7 +166,7 @@ const Nav: React.FC<NavProps> = ({userDetails, userRole, loading }) => {
                         <path
                           fillRule="evenodd"
                           clipRule="evenodd"
-                          d="..."
+                          d=""
                           fill="currentColor"
                         ></path>
                       </svg>

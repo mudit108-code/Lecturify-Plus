@@ -5,6 +5,10 @@ const LectureSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide a lecture topic"],
   },
+  transcript: {
+    type: String, // This will store the transcript as a string
+    default: null, // Default value if no transcript is provided
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -31,8 +35,8 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'turf', 'admin'],
-    default: 'user',
+    enum: ["user", "turf", "admin"],
+    default: "user",
   },
   dateOfBirth: {
     type: String,
@@ -40,7 +44,7 @@ const UserSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ['male', 'female', 'others'],
+    enum: ["male", "female", "others"],
     default: null,
   },
   isVerified: {
