@@ -19,8 +19,8 @@ Lecturify + is a simple and effective tool that converts lecture audio into stru
 
 1. **Clone the repo**:
     ```bash
-    git clone https://github.com/visionjain/Lecturify
-    cd Lecturify
+    git clone https://github.com/visionjain/Lecturify-Plus
+    cd Lecturify-Plus
     ```
 
 2. **Install dependencies**:
