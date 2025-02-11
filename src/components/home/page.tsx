@@ -11,7 +11,7 @@ import { FaPlus, FaRegEdit, FaTrashAlt } from "react-icons/fa";
 import { TfiWrite } from "react-icons/tfi";
 import axios from "axios";
 
-// Define Lecture type
+// Define Lecture Type
 type Lecture = {
     _id: string;
     topic: string;
@@ -22,7 +22,7 @@ const Home = () => {
     const router = useRouter();
     const [isMounted, setIsMounted] = useState(false);
     const [token, setToken] = useState<string | null>(null);
-    const [lectures, setLectures] = useState<Lecture[]>([]); // Update lectures to use Lecture type
+    const [lectures, setLectures] = useState<Lecture[]>([]); // Update Lectures to use Lecture type
     const [dialogOpen, setDialogOpen] = useState(false);
     const [newLecture, setNewLecture] = useState("");
     const [editingLecture, setEditingLecture] = useState<Lecture | null>(null); // For editing lecture

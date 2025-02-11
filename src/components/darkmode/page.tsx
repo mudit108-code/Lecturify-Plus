@@ -10,7 +10,7 @@ const DarkModeButton = () => {
     };
 
     useEffect(() => {
-        const rootElement = document.documentElement; // Select the <html> tag
+        const rootElement = document.documentElement; // Select the html tag
 
         if (darkMode) {
             rootElement.classList.add('dark');
