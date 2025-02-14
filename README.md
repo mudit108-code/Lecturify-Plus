@@ -25,15 +25,24 @@ git clone https://github.com/visionjain/Lecturify-Plus
 cd Lecturify-Plus
 ```
 
-### 2️⃣ Install Dependencies
+### 2️⃣ Set Up Environment Variables
+Create a .env file in the root directory and add the following:
 ```sh
-pip install -r requirements.txt
+TOKEN_SECRET=
+MONGO_URI=
+GEMINI_API_KEY=
 ```
 
-### 3️⃣ Run the Application
+### 3️⃣ Install Dependencies
 ```sh
-streamlit run final.py
+npm install
 ```
+
+### 4️⃣ Run the Application
+```sh
+npm run dev
+```
+
 
 ## 🎯 Usage Instructions
 
