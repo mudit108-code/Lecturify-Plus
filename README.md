@@ -10,7 +10,7 @@ Lecturify + is a simple and effective tool that converts lecture audio into stru
 
 ## Tech Stack
 
-- **Streamlit** for UI
+- **NextJS** framework for developing frontend application
 - **Gemini LLM API** for text processing
 - **SpeechRecognition** for audio transcription
 - **gTTS** (Google Text-to-Speech) for audio output
