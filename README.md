@@ -8,8 +8,6 @@ Lecturify + is a powerful tool designed to convert lecture audio into structured
 
 ✅ **Quizzes & Flashcards** – Automatically generates quizzes and flashcards from lecture content to reinforce learning.
 
-✅ **User-Friendly Interface** – Built with Streamlit for seamless interaction and content review.
-
 ## 🛠 Tech Stack
 
 - **Frontend:** Next.js framework
