@@ -14,6 +14,10 @@ import { FaWandMagicSparkles } from "react-icons/fa6";
 import { FaMicrophoneAlt } from "react-icons/fa";
 import { toast } from 'sonner';
 import ReactMarkdown from "react-markdown";
+import { saveAs } from "file-saver";
+import { Document, Packer, Paragraph, TextRun } from "docx";
+
+
 import {
   Tabs,
   TabsContent,
@@ -50,7 +54,7 @@ const LecturePage = () => {
     try {
       setIsGenerating(true);
       setButtonAnimation("animating");
-  
+
       // Step 1: Generate the lecture notes
       setButtonText("Generating Notes...");
       const lectureNotesResponse = await fetch("/api/users/generateResponse", {
@@ -62,7 +66,7 @@ const LecturePage = () => {
       });
       const lectureNotesResult = await lectureNotesResponse.json();
       setNotes(lectureNotesResult.output);
-  
+
       // Step 2: Generate the cheat sheet
       setButtonText("Generating Cheat Sheet...");
       const cheatSheetResponse = await fetch("/api/users/generateResponse", {
@@ -74,7 +78,7 @@ const LecturePage = () => {
       });
       const cheatSheetResult = await cheatSheetResponse.json();
       setCheatSheet(cheatSheetResult.output);
-  
+
       // Step 3: Generate the quiz
       setButtonText("Generating Quiz...");
       const quizResponse = await fetch("/api/users/generateResponse", {
@@ -86,7 +90,7 @@ const LecturePage = () => {
       });
       const quizResult = await quizResponse.json();
       setQwiz(quizResult.output);
-  
+
       // Step 4: Generate the flashcards
       setButtonText("Generating Scenario Q...");
       const flashcardsResponse = await fetch("/api/users/generateResponse", {
@@ -98,7 +102,7 @@ const LecturePage = () => {
       });
       const flashcardsResult = await flashcardsResponse.json();
       setFlashcards(flashcardsResult.output);
-  
+
       // Step 5: Save all generated content
       setButtonText("Saving Content...");
       const saveGenerationResponse = await fetch("/api/users/saveGeneration", {
@@ -125,7 +129,7 @@ const LecturePage = () => {
       } else {
         setButtonText("Error Saving Content");
       }
-  
+
       setIsGenerating(false);
       setButtonAnimation(""); // Reset the animation when done
     } catch (error) {
@@ -134,7 +138,7 @@ const LecturePage = () => {
       setIsGenerating(false);
     }
   };
-  
+
 
 
   // Using useRef to persist the timer across renders
@@ -268,6 +272,32 @@ const LecturePage = () => {
     });
     return `${formattedDate} ${formattedTime}`;
   };
+
+  const handleSave = (title: string, content: string) => {
+    if (!content) return;
+
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            new Paragraph({
+              children: [new TextRun({ text: title, bold: true, size: 28 })],
+            }),
+            new Paragraph({
+              children: [new TextRun(content)],
+            }),
+          ],
+        },
+      ],
+    });
+
+    Packer.toBlob(doc).then((blob) => {
+      saveAs(blob, `${title}.docx`);
+    });
+  };
+
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -506,8 +536,17 @@ const LecturePage = () => {
                       {/* Taller Content Block */}
                       <div className="w-[100%] bg-[#FFFFFF] dark:bg-[#212628] mt-2 mb-2 rounded-lg flex items-center justify-center">
                         <div className="w-full max-h-[482px] min-h-[120px] overflow-y-auto mb-2">
+                          {/* Notes Tab */}
                           <TabsContent value="notes">
-                            <div className="w-full">
+                            <div className="w-full relative">
+                              {notes && (
+                                <Button
+                                  className="absolute font-semibold top-2 right-2 px-3 py-1"
+                                  onClick={() => handleSave("Lecture Notes", notes)}
+                                >
+                                  Download
+                                </Button>
+                              )}
                               {notes ? (
                                 <ReactMarkdown className="px-2 text-sm">{notes}</ReactMarkdown>
                               ) : (
@@ -515,36 +554,57 @@ const LecturePage = () => {
                               )}
                             </div>
                           </TabsContent>
+                          {/* Qwiz Tab */}
                           <TabsContent value="qwiz">
-                            <div className="w-full">
+                            <div className="w-full relative">
+                              {qwiz && (
+                                <Button
+                                  className="absolute top-2 right-2 px-3 py-1"
+                                  onClick={() => handleSave("Quiz", qwiz)}
+                                >
+                                  Download
+                                </Button>
+                              )}
                               {qwiz ? (
-                               <ReactMarkdown className="px-2 text-sm">{qwiz}</ReactMarkdown>
+                                <ReactMarkdown className="px-2 text-sm">{qwiz}</ReactMarkdown>
                               ) : (
-                                <p className="px-2 text-sm text-gray-500">
-                                  No quiz available.
-                                </p>
+                                <p className="px-2 text-sm text-gray-500">No quiz available.</p>
                               )}
                             </div>
                           </TabsContent>
+                          {/* Flashcards Tab */}
                           <TabsContent value="flashcards">
-                            <div className="w-full">
+                            <div className="w-full relative">
+                              {flashcards && (
+                                <Button
+                                  className="absolute top-2 right-2 px-3 py-1"
+                                  onClick={() => handleSave("Scenario Questions", flashcards)}
+                                >
+                                  Download
+                                </Button>
+                              )}
                               {flashcards ? (
                                 <ReactMarkdown className="px-2 text-sm">{flashcards}</ReactMarkdown>
                               ) : (
-                                <p className="px-2 text-sm text-gray-500">
-                                  No scenario Based Questions available.
-                                </p>
+                                <p className="px-2 text-sm text-gray-500">No scenario-based questions available.</p>
                               )}
                             </div>
                           </TabsContent>
+                          {/* Cheat Sheet Tab */}
                           <TabsContent value="cheatsheet">
-                            <div className="w-full">
+                            <div className="w-full relative">
+                              {cheatSheet && (
+                                <Button
+                                  className="absolute top-2 right-2 px-3 py-1 "
+                                  onClick={() => handleSave("Cheat Sheet", cheatSheet)}
+                                >
+                                  Download
+                                </Button>
+                              )}
                               {cheatSheet ? (
-                               <ReactMarkdown className="px-2 text-sm">{cheatSheet}</ReactMarkdown>
+                                <ReactMarkdown className="px-2 text-sm">{cheatSheet}</ReactMarkdown>
                               ) : (
-                                <p className="px-2 text-sm text-gray-500">
-                                  No cheat sheet available.
-                                </p>
+                                <p className="px-2 text-sm text-gray-500">No cheat sheet available.</p>
                               )}
                             </div>
                           </TabsContent>

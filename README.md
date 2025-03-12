@@ -1,38 +1,56 @@
 # Lecturify +: Lecture to Notes Converter (Web-V2)
 
-Lecturify + is a simple and effective tool that converts lecture audio into structured notes and generates quizzes and flashcards based on the content. Using Gemini's LLM API for text processing and summarization, this project aims to streamline studying by providing organized, interactive resources.
+Lecturify + is a powerful tool designed to convert lecture audio into structured notes while generating quizzes and flashcards to enhance learning. Leveraging Gemini's LLM API for text processing and summarization, Lecturify + streamlines studying by providing well-organized, interactive study materials.
 
-## Features
+## 🚀 Features
 
-- **Lecture to Notes**: Transcribes lecture audio and converts it into detailed, organized notes.
-- **Quizzes & Scenario Questions**: Automatically generates quizzes and flashcards from lecture content to aid retention.
-- **Streamlit Interface**: User-friendly UI for easy interaction and content review.
+✅ **Lecture to Notes** – Transcribes lecture audio and converts it into detailed, structured notes.
 
-## Tech Stack
+✅ **Quizzes & Flashcards** – Automatically generates quizzes and flashcards from lecture content to reinforce learning.
 
-- **NextJS** framework for developing frontend application
-- **Gemini LLM API** for text processing
-- **SpeechRecognition** for audio transcription
-- **gTTS** (Google Text-to-Speech) for audio output
+## 🛠 Tech Stack
 
-## Setup
+- **Frontend:** Next.js framework
+- **Backend:** Gemini LLM API for text processing
+- **Audio Processing:** SpeechRecognition for transcription
+- **Text-to-Speech:** gTTS (Google Text-to-Speech)
 
-1. **Clone the repo**:
-    ```bash
-    git clone https://github.com/visionjain/Lecturify-Plus
-    cd Lecturify-Plus
-    ```
+## 📌 Setup Guide
 
-2. **Install dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    ```
+### 1️⃣ Clone the Repository
+```sh
+git clone https://github.com/visionjain/Lecturify-Plus
+cd Lecturify-Plus
+```
 
-3. **Run the app**:
-    ```bash
-    streamlit run final.py
-    ```
+### 2️⃣ Set Up Environment Variables
+Create a .env file in the root directory and add the following:
+```sh
+TOKEN_SECRET=
+MONGO_URI=
+GEMINI_API_KEY=
+```
 
-## Usage
+### 3️⃣ Install Dependencies
+```sh
+npm install
+```
 
-Upload or record lecture audio, review the generated notes, and interact with quizzes and flashcards for a comprehensive learning experience.
+### 4️⃣ Run the Application
+```sh
+npm run dev
+```
+
+
+## 🎯 Usage Instructions
+
+1. **Upload or record** a lecture audio file.
+2. **Review** the auto-generated structured notes.
+3. **Engage** with quizzes and flashcards to reinforce key concepts.
+
+## 📜 License
+This project is open-source and available under the [MIT License](LICENSE).
+
+---
+
+Made with ❤️ by the Lecturify + Team 🚀
