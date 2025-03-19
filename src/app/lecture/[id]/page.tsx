@@ -16,6 +16,8 @@ import { toast } from 'sonner';
 import ReactMarkdown from "react-markdown";
 import { saveAs } from "file-saver";
 import { Document, Packer, Paragraph, TextRun } from "docx";
+import { AiOutlineEye } from "react-icons/ai";
+import remarkGfm from "remark-gfm";
 
 
 import {
@@ -49,6 +51,26 @@ const LecturePage = () => {
   const [buttonText, setButtonText] = useState("Generate");
   const [isGenerating, setIsGenerating] = useState(false);
   const [buttonAnimation, setButtonAnimation] = useState("");
+  const [isAccessible, setIsAccessible] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [synth, setSynth] = useState<SpeechSynthesis | null>(null);
+  const [speechQueue, setSpeechQueue] = useState<SpeechSynthesisUtterance[]>([]);
+  const [currentUtteranceIndex, setCurrentUtteranceIndex] = useState(0);
+  const [speakingTabs, setSpeakingTabs] = useState<{ [key: string]: boolean }>({});
+
+
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setSynth(window.speechSynthesis);
+    }
+  }, []);
+
+  const splitTextIntoChunks = (text: string, chunkSize: number = 100) => {
+    const regex = new RegExp(`.{1,${chunkSize}}(\\s|$)`, "g");
+    return text.match(regex) || [];
+  };
+
 
   const handleGenerateClick = async () => {
     try {
@@ -138,6 +160,46 @@ const LecturePage = () => {
       setIsGenerating(false);
     }
   };
+
+
+  const toggleAccessibility = () => {
+    setIsAccessible(!isAccessible);
+    // Implement actual accessibility features toggle logic here
+  };
+
+
+  const toggleSpeech = (tab: string, text: string) => {
+    if (!synth) return;
+
+    if (speakingTabs[tab]) {
+      synth.cancel();
+      setSpeakingTabs((prev) => ({ ...prev, [tab]: false })); // Stop speech for the specific tab
+    } else {
+      if (!text) return;
+      const chunks = splitTextIntoChunks(text, 200);
+
+      let utterances = chunks.map((chunk, index) => {
+        let utterance = new SpeechSynthesisUtterance(chunk);
+        utterance.lang = "en-US";
+        utterance.rate = 1;
+        utterance.onend = () => {
+          if (index === chunks.length - 1) {
+            setSpeakingTabs((prev) => ({ ...prev, [tab]: false })); // Reset when finished
+          } else {
+            synth.speak(utterances[index + 1]); // Speak next chunk
+          }
+        };
+        return utterance;
+      });
+
+      setSpeechQueue(utterances);
+      if (utterances.length > 0) {
+        synth.speak(utterances[0]);
+        setSpeakingTabs((prev) => ({ ...prev, [tab]: true })); // Mark this tab as speaking
+      }
+    }
+  };
+
 
 
 
@@ -273,9 +335,28 @@ const LecturePage = () => {
     return `${formattedDate} ${formattedTime}`;
   };
 
-  const handleSave = (title: string, content: string) => {
+  // Function to remove Markdown syntax and extract plain text
+  const stripMarkdown = (markdown: string) => {
+    return markdown
+      .replace(/[#_*~>]/g, "") // Remove Markdown formatting symbols
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Remove links but keep text
+      .replace(/!\[.*\]\(.*\)/g, "") // Remove images
+      .replace(/\n+/g, " ") // Replace newlines with spaces
+      .trim();
+  };
+
+  const handleSave = async (title: string, content: string) => {
     if (!content) return;
 
+    // Remove <br> tags before further processing
+    let finalContent = content.replace(/<br\s*\/?>/g, "\n");
+
+    // Convert to Braille if Accessibility Mode is ON
+    if (isAccessible) {
+      finalContent = convertToBraille(finalContent);
+    }
+
+    // Ensure Markdown formatting is preserved
     const doc = new Document({
       sections: [
         {
@@ -284,18 +365,39 @@ const LecturePage = () => {
             new Paragraph({
               children: [new TextRun({ text: title, bold: true, size: 28 })],
             }),
-            new Paragraph({
-              children: [new TextRun(content)],
-            }),
+            ...finalContent.split("\n").map((line) =>
+              new Paragraph({ children: [new TextRun(line)] })
+            ),
           ],
         },
       ],
     });
 
     Packer.toBlob(doc).then((blob) => {
-      saveAs(blob, `${title}.docx`);
+      saveAs(blob, `${title}${isAccessible ? "_braille" : ""}.docx`);
     });
   };
+
+
+
+  const convertToBraille = (text: string) => {
+    const brailleMap: { [key: string]: string } = {
+      A: "⠁", B: "⠃", C: "⠉", D: "⠙", E: "⠑", F: "⠋", G: "⠛", H: "⠓", I: "⠊", J: "⠚",
+      K: "⠅", L: "⠇", M: "⠍", N: "⠝", O: "⠕", P: "⠏", Q: "⠟", R: "⠗", S: "⠎", T: "⠞",
+      U: "⠥", V: "⠧", W: "⠺", X: "⠭", Y: "⠽", Z: "⠵",
+
+      // Numbers (Braille numbers are preceded by the number sign ⠼)
+      "1": "⠼⠁", "2": "⠼⠃", "3": "⠼⠉", "4": "⠼⠙", "5": "⠼⠑",
+      "6": "⠼⠋", "7": "⠼⠛", "8": "⠼⠓", "9": "⠼⠊", "0": "⠼⠚",
+
+      // Punctuation
+      " ": " ", ".": "⠲", ",": "⠂", "?": "⠦", "!": "⠖", "-": "⠤", ":": "⠒", ";": "⠆",
+      "(": "⠶", ")": "⠶", "/": "⠌", "'": "⠄", "\"": "⠐⠦", "&": "⠯"
+    };
+
+    return text.toUpperCase().split("").map(char => brailleMap[char] || char).join("");
+  };
+
 
 
 
@@ -371,13 +473,34 @@ const LecturePage = () => {
         >
           <div>
             <div className="text-xl ">
-              <div className="pl-4 pt-4 font-bold">
+              <div className="pl-4 pt-4 font-bold flex justify-between items-center pr-6">
+                {/* Lecture Name and Time */}
                 <h1 className="italic text-3xl">
-                  {lectureDetails.lectureName} {" "}
+                  {lectureDetails.lectureName}{" "}
                   <span className="text-base lowercase">
                     {lectureDetails.LectureTime}
                   </span>
                 </h1>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                    Accessibility Mode
+                  </span>
+                  <div className="relative group">
+                    <label className="toggle-switch flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isAccessible}
+                        onChange={toggleAccessibility}
+                        className="hidden"
+                      />
+                      <div className={`toggle-switch-background ${isAccessible ? "bg-blue-500" : "bg-gray-300"} w-12 h-6 rounded-full relative transition-all`}>
+                        <div className={`toggle-switch-handle absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-md transition-all ${isAccessible ? "translate-x-6" : "translate-x-0"}`}></div>
+                      </div>
+                      <AiOutlineEye className={`text-lg ${isAccessible ? "text-blue-500" : "text-gray-500"}`} />
+                    </label>
+                  </div>
+                </div>
               </div>
 
               <div
@@ -472,19 +595,42 @@ const LecturePage = () => {
                 <Label className="text-lg">Lecture Transcript</Label>
               </div>
               <div className="relative border border-[rgb(61,68,77)] ml-4 mr-4 bg-[#E6E6E6] dark:bg-[#0E0E0E] rounded-xl">
+                {isAccessible && transcript && (
+                  <Button
+                    className="absolute top-2 right-2 px-2 py-1 text-sm rounded-lg transition"
+                    onClick={() => toggleSpeech("transcript", transcript)}
+                  >
+                    {speakingTabs["transcript"] ? "🔴" : "🔊"}
+                  </Button>
+                )}
+
                 <Textarea
                   className="h-36 text-black dark:text-white pr-20 textarea-no-scrollbar" // Added padding to the right for the button
                   placeholder="Paste your transcript here."
                   value={transcript}
                   onChange={(e) => setTranscript(e.target.value)} // Allow manual editing
                 />
-                <Button
-                  className="absolute bottom-2 right-2 px-4 py-2 rounded-lg text-sm transition"
-                  onClick={saveTranscript}
-                >
-                  Save Transcript
-                </Button>
+                {/* Save Transcript Button */}
+
+                {/* Buttons Wrapper */}
+                <div className="absolute bottom-2 right-2 flex flex-wrap justify-end gap-2">
+                  {/* Save Transcript Button */}
+                  <Button className="px-4 py-2 rounded-lg text-sm transition" onClick={saveTranscript}>
+                    Save Transcript
+                  </Button>
+
+                  {/* Single Download Button - Handles Normal & Braille Modes */}
+                  {transcript && (
+                    <Button
+                      className="px-4 py-2 rounded-lg text-sm transition"
+                      onClick={() => handleSave("Lecture Transcript", transcript)}
+                    >
+                      Download {isAccessible ? "Braille" : ""}
+                    </Button>
+                  )}
+                </div>
               </div>
+
 
               <div className="ml-4 mr-4 mt-2 flex item-center justify-center">
                 <Button
@@ -533,79 +679,98 @@ const LecturePage = () => {
                           Cheat Sheet
                         </TabsTrigger>
                       </TabsList>
-                      {/* Taller Content Block */}
+                      {/* Tab Content */}
                       <div className="w-[100%] bg-[#FFFFFF] dark:bg-[#212628] mt-2 mb-2 rounded-lg flex items-center justify-center">
                         <div className="w-full max-h-[482px] min-h-[120px] overflow-y-auto mb-2">
+
                           {/* Notes Tab */}
                           <TabsContent value="notes">
                             <div className="w-full relative">
                               {notes && (
-                                <Button
-                                  className="absolute font-semibold top-2 right-2 px-3 py-1"
-                                  onClick={() => handleSave("Lecture Notes", notes)}
-                                >
-                                  Download
-                                </Button>
+                                <div className="absolute top-2 right-2 flex space-x-2">
+                                  <Button className="font-semibold px-3 py-1" onClick={() => handleSave("Lecture Notes", notes)}>
+                                    Download {isAccessible ? "Braille" : ""}
+                                  </Button>
+                                  {isAccessible && (
+                                    <Button
+                                      className="font-semibold px-3 py-1"
+                                      onClick={() => toggleSpeech("notes", stripMarkdown(notes))}
+                                    >
+                                      {speakingTabs["notes"] ? "🔴" : "🔊"}
+                                    </Button>
+                                  )}
+                                </div>
                               )}
-                              {notes ? (
-                                <ReactMarkdown className="px-2 text-sm">{notes}</ReactMarkdown>
-                              ) : (
-                                <p className="px-2 text-sm text-gray-500">No notes available.</p>
-                              )}
+                              {notes ? <ReactMarkdown className="px-2 text-sm" remarkPlugins={[remarkGfm]}>{notes}</ReactMarkdown> : <p className="px-2 text-sm text-gray-500">No notes available.</p>}
                             </div>
                           </TabsContent>
+
+
+
+
                           {/* Qwiz Tab */}
                           <TabsContent value="qwiz">
                             <div className="w-full relative">
                               {qwiz && (
-                                <Button
-                                  className="absolute top-2 right-2 px-3 py-1"
-                                  onClick={() => handleSave("Quiz", qwiz)}
-                                >
-                                  Download
-                                </Button>
+                                <div className="absolute top-2 right-2 flex space-x-2">
+                                  <Button className="font-semibold px-3 py-1" onClick={() => handleSave("Quiz", qwiz)}>
+                                    Download {isAccessible ? "Braille" : ""}
+                                  </Button>
+                                  {isAccessible && (
+                                    <Button
+                                      className="font-semibold px-3 py-1"
+                                      onClick={() => toggleSpeech("qwiz", stripMarkdown(qwiz))}
+                                    >
+                                      {speakingTabs["qwiz"] ? "🔴" : "🔊"}
+                                    </Button>
+                                  )}
+                                </div>
                               )}
-                              {qwiz ? (
-                                <ReactMarkdown className="px-2 text-sm">{qwiz}</ReactMarkdown>
-                              ) : (
-                                <p className="px-2 text-sm text-gray-500">No quiz available.</p>
-                              )}
+                              {qwiz ? <ReactMarkdown className="px-2 text-sm" remarkPlugins={[remarkGfm]}>{String(qwiz).replace(/<br\s*\/?>/g, "\n")}</ReactMarkdown> : <p className="px-2 text-sm text-gray-500">No quiz available.</p>}
                             </div>
                           </TabsContent>
+
                           {/* Flashcards Tab */}
                           <TabsContent value="flashcards">
                             <div className="w-full relative">
                               {flashcards && (
-                                <Button
-                                  className="absolute top-2 right-2 px-3 py-1"
-                                  onClick={() => handleSave("Scenario Questions", flashcards)}
-                                >
-                                  Download
-                                </Button>
+                                <div className="absolute top-2 right-2 flex space-x-2">
+                                  <Button className="font-semibold px-3 py-1" onClick={() => handleSave("Scenario Questions", flashcards)}>
+                                    Download {isAccessible ? "Braille" : ""}
+                                  </Button>
+                                  {isAccessible && (
+                                    <Button
+                                      className="font-semibold px-3 py-1"
+                                      onClick={() => toggleSpeech("flashcards", stripMarkdown(flashcards))}
+                                    >
+                                      {speakingTabs["flashcards"] ? "🔴" : "🔊"}
+                                    </Button>
+                                  )}
+                                </div>
                               )}
-                              {flashcards ? (
-                                <ReactMarkdown className="px-2 text-sm">{flashcards}</ReactMarkdown>
-                              ) : (
-                                <p className="px-2 text-sm text-gray-500">No scenario-based questions available.</p>
-                              )}
+                              {flashcards ? <ReactMarkdown className="px-2 text-sm" remarkPlugins={[remarkGfm]}>{flashcards}</ReactMarkdown> : <p className="px-2 text-sm text-gray-500">No scenario-based questions available.</p>}
                             </div>
                           </TabsContent>
+
                           {/* Cheat Sheet Tab */}
                           <TabsContent value="cheatsheet">
                             <div className="w-full relative">
                               {cheatSheet && (
-                                <Button
-                                  className="absolute top-2 right-2 px-3 py-1 "
-                                  onClick={() => handleSave("Cheat Sheet", cheatSheet)}
-                                >
-                                  Download
-                                </Button>
+                                <div className="absolute top-2 right-2 flex space-x-2">
+                                  <Button className="font-semibold px-3 py-1" onClick={() => handleSave("Cheat Sheet", cheatSheet)}>
+                                    Download {isAccessible ? "Braille" : ""}
+                                  </Button>
+                                  {isAccessible && (
+                                    <Button
+                                      className="font-semibold px-3 py-1"
+                                      onClick={() => toggleSpeech("cheatsheet", stripMarkdown(cheatSheet))}
+                                    >
+                                      {speakingTabs["cheatsheet"] ? "🔴" : "🔊"}
+                                    </Button>
+                                  )}
+                                </div>
                               )}
-                              {cheatSheet ? (
-                                <ReactMarkdown className="px-2 text-sm">{cheatSheet}</ReactMarkdown>
-                              ) : (
-                                <p className="px-2 text-sm text-gray-500">No cheat sheet available.</p>
-                              )}
+                              {cheatSheet ? <ReactMarkdown className="px-2 text-sm" remarkPlugins={[remarkGfm]}>{cheatSheet}</ReactMarkdown> : <p className="px-2 text-sm text-gray-500">No cheat sheet available.</p>}
                             </div>
                           </TabsContent>
 

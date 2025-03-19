@@ -255,7 +255,7 @@ const Home = () => {
     
                 {/* Table Section */}
                 <div className="flex space-x-4 pl-4 pt-4">
-                    <div className="w-[99%] h-[350px] bg-[#E6E6E6] dark:bg-[#0F0F0F] rounded-3xl p-4 overflow-y-auto">
+                    <div className="w-[99%] min-h-[550px] bg-[#E6E6E6] dark:bg-[#0F0F0F] rounded-3xl p-4 overflow-y-auto">
                         <table className="table-auto w-full text-left border-collapse">
                             <thead>
                                 <tr>
