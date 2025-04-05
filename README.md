@@ -1,4 +1,4 @@
-# Lecturify +: Lecture to Notes Converter (Web-V2)
+# Lecturify +: Lecture to Learning Material (Web-V2)
 
 Lecturify + is a powerful tool designed to convert lecture audio into structured notes while generating quizzes and flashcards to enhance learning. Leveraging Gemini's LLM API for text processing and summarization, Lecturify + streamlines studying by providing well-organized, interactive study materials.
 
