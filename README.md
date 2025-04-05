@@ -54,3 +54,12 @@ This project is open-source and available under the [MIT License](LICENSE).
 ---
 
 Made with ❤️ by the Lecturify + Team 🚀
+
+---
+
+
+![image](https://github.com/user-attachments/assets/47d62c67-a751-4b5f-8b76-56d35d7c487a)
+![image](https://github.com/user-attachments/assets/cfbd3e7c-1043-4a87-b8a4-757232de5f9f)
+![image](https://github.com/user-attachments/assets/81a533a1-2d48-402b-acda-d3fe179a09d0)
+
+
